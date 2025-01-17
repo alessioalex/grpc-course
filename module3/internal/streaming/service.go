@@ -83,6 +83,32 @@ func (s *Service) LogStream(
 		// increment count
 		count++
 	}
+}
 
-	return status.Errorf(codes.Unimplemented, "method LogStream not implemented")
+func (s *Service) Echo(
+	stream grpc.BidiStreamingServer[proto.EchoRequest, proto.EchoResponse],
+) error {
+	// loop through the messages received from the client
+	for {
+		req, err := stream.Recv()
+		if err != nil {
+			// check if the stream is closed
+			if err == io.EOF {
+				// close the server side stream
+				return nil
+			}
+			return err
+		}
+
+		log.Printf("message received: %s", req.GetMessage())
+
+		// - build our response and send back from server
+		res := &proto.EchoResponse{
+			Message: req.GetMessage(),
+		}
+		if err := stream.Send(res); err != nil {
+			return err
+		}
+	}
+	return status.Errorf(codes.Unimplemented, "method Echo not implemented")
 }
