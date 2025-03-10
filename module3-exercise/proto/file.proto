@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package file;
+
+option go_package = "github.com/alessioalex/grpc-course/module3-exercise/proto";
+
+service FileService {
+  rpc UploadStream(stream UploadStreamRequest) returns (UploadStreamResponse);
+}
+
+message UploadStreamRequest {
+
+}
+
+message UploadStreamResponse {
+
+}
